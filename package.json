@@ -1,0 +1,24 @@
+{
+  "name": "curry-named",
+  "version": "1.0.0",
+  "description": "A curry function with named parameters",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roberto-naharro/curry-named.git"
+  },
+  "keywords": [
+    "javascript",
+    "functional",
+    "programming",
+    "curry",
+    "parameters",
+    "params"
+  ],
+  "author": "Roberto Naharro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/roberto-naharro/curry-named/issues"
+  },
+  "homepage": "https://github.com/roberto-naharro/curry-named#readme"
+}

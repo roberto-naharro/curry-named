@@ -1,4 +1,56 @@
 /**
+ * Check if the function has all the arguments to be called
+ *
+ * @param {array | number} params total params needed to complete the function
+ * call
+ * @param {array} paramsGiven params passed already to the function
+ * @returns {boolean}
+ */
+const isComplete = (params, paramsGiven) => {
+  if (Array.isArray(params)) {
+    return params.every(param => paramsGiven[param] !== undefined);
+  } else {
+    return paramsGiven.length >= params;
+  }
+};
+
+/**
+ * Add new arguments to the params given and return it
+ *
+ * @param {array} newArgs New arguments added to the function
+ * @param {array | object} paramsGiven Arguments the function already has
+ *
+ * @returns {array | object}
+ */
+const addArgs = (newArgs, paramsGiven) => {
+  if (Array.isArray(paramsGiven)) {
+    const params = [...paramsGiven];
+    if (newArgs) {
+      newArgs.forEach(newArg => params.unshift(newArg));
+    }
+    return params;
+  } else {
+    const params = { ...paramsGiven };
+    if (newArgs) {
+      newArgs.forEach(newArg => Object.assign(params, newArg));
+    }
+    return params;
+  }
+};
+
+/**
+ * @param {Function} fn Function to be called
+ * @param {array | number} params total params needed to complete the function
+ * call
+ * @param {array | object} paramsGiven arguments values to pass to the function
+ */
+const callFn = (fn, params, paramsGiven) => {
+  return Array.isArray(paramsGiven)
+    ? fn(...paramsGiven)
+    : fn(...params.map(p => paramsGiven[p]));
+};
+
+/**
  * Curry a function
  * @example
  * ```
@@ -15,54 +67,19 @@
  * ```
  */
 const curry = (...args) => {
-  let fn = args.pop();
-  let params;
-  let paramsGiven;
+  const fn0 = args.pop();
+  const params0 = args.length > 0 ? args[0] : fn.length;
+  const paramsGiven0 = Array.isArray(params0) ? {} : [];
 
-  const init = () => {
-    params =
-      args.length > 0
-        ? Array.isArray(args[0])
-          ? args[0]
-          : args[0]
-        : fn.length;
+  const curried = (params, paramsGiven, fn) => (...newArgs) => {
+    const paramsAcc = addArgs(newArgs, paramsGiven);
 
-    paramsGiven = Array.isArray(params) ? {} : [];
+    return isComplete(params, paramsAcc)
+      ? callFn(fn, params, paramsAcc)
+      : curried(params, paramsAcc, fn);
   };
 
-  const isComplete = () => {
-    if (Array.isArray(params)) {
-      return params.every(param => paramsGiven[param] !== undefined);
-    } else {
-      return paramsGiven.length >= params;
-    }
-  };
-
-  const addArgs = newArgs => {
-    if (Array.isArray(paramsGiven)) {
-      paramsGiven = paramsGiven.concat(newArgs);
-    } else {
-      newArgs.map(newArg => Object.assign(paramsGiven, newArg));
-    }
-  };
-
-  const cleanAndCall = () => {
-    const out = Array.isArray(paramsGiven)
-      ? fn(...paramsGiven)
-      : fn(...params.map(p => paramsGiven[p]));
-    init();
-    return out;
-  };
-
-  init();
-  
-  const curried = (...newArgs) => {
-    addArgs(newArgs);
-
-    return isComplete() ? cleanAndCall() : curried;
-  };
-
-  return curried;
+  return curried(params0, paramsGiven0, fn0);
 };
 
 module.export = curry;

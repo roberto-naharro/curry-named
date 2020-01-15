@@ -67,9 +67,26 @@ const callFn = (fn, params, paramsGiven) => {
  * ```
  */
 const curry = (...args) => {
-  const fn0 = args.pop();
-  const params0 = args.length > 0 ? args[0] : fn.length;
-  const paramsGiven0 = Array.isArray(params0) ? {} : [];
+  let fn0;
+  let params0;
+
+  switch (args.length) {
+    case 0:
+      throw new Error("Must have at least 1 parameter");
+    case 1:
+      // curry(fn)
+      fn0 = args[0];
+      params0 = fn0.length;
+      break;
+    case 2:
+      // curry(n, fn)
+      // curry([key1, ...keyN], fn)
+      params0 = args[0];
+      fn0 = args[1];
+      break;
+    default:
+      break;
+  }
 
   const curried = (params, paramsGiven, fn) => (...newArgs) => {
     const paramsAcc = addArgs(newArgs, paramsGiven);
@@ -79,7 +96,7 @@ const curry = (...args) => {
       : curried(params, paramsAcc, fn);
   };
 
-  return curried(params0, paramsGiven0, fn0);
+  return curried(params0, Array.isArray(params0) ? {} : [], fn0);
 };
 
 module.export = curry;

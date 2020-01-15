@@ -6,7 +6,7 @@
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest"
   },
-  "main": "index.mjs",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/roberto-naharro/curry-named.git"

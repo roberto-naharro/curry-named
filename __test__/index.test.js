@@ -9,7 +9,6 @@ describe("curry", () => {
   });
 
   it("one argument, simple function", () => {
-    debugger;
     const getFnC = curry(getFn);
 
     expectFn(getFnC);
@@ -19,7 +18,6 @@ describe("curry", () => {
   });
 
   it("2 arguments, with number of parameters", () => {
-    debugger;
     const getFnC = curry(2, getFn);
 
     expectFn(getFnC);
@@ -28,7 +26,6 @@ describe("curry", () => {
   });
 
   it("2 arguments, with named parameters", () => {
-    debugger;
     const getFnC = curry(["obj", "k", "add"], getFn);
 
     expectFn(getFnC);

@@ -26,7 +26,7 @@ const addArgs = (newArgs, paramsGiven) => {
   if (Array.isArray(paramsGiven)) {
     const params = [...paramsGiven];
     if (newArgs) {
-      newArgs.forEach(newArg => params.unshift(newArg));
+      newArgs.forEach(newArg => params.push(newArg));
     }
     return params;
   } else {
@@ -50,6 +50,14 @@ const callFn = (fn, params, paramsGiven) => {
     : fn(...params.map(p => paramsGiven[p]));
 };
 
+const executeIfFunction = f => (typeof f === "function" ? f() : f);
+
+const switchcase = cases => defaultCase => key =>
+  cases.hasOwnProperty(key) ? cases[key] : defaultCase;
+
+const switchcaseF = cases => defaultCase => key =>
+  executeIfFunction(switchcase(cases)(defaultCase)(key));
+
 /**
  * Curry a function
  * @example
@@ -70,23 +78,22 @@ const curry = (...args) => {
   let fn0;
   let params0;
 
-  switch (args.length) {
-    case 0:
+  switchcaseF({
+    0: () => {
       throw new Error("Must have at least 1 parameter");
-    case 1:
+    },
+    1: () => {
       // curry(fn)
       fn0 = args[0];
       params0 = fn0.length;
-      break;
-    case 2:
+    },
+    2: () => {
       // curry(n, fn)
       // curry([key1, ...keyN], fn)
       params0 = args[0];
       fn0 = args[1];
-      break;
-    default:
-      break;
-  }
+    }
+  })()(args.length);
 
   const curried = (params, paramsGiven, fn) => (...newArgs) => {
     const paramsAcc = addArgs(newArgs, paramsGiven);
@@ -99,4 +106,4 @@ const curry = (...args) => {
   return curried(params0, Array.isArray(params0) ? {} : [], fn0);
 };
 
-module.export = curry;
+module.exports = curry;
